@@ -32,21 +32,45 @@ public class Knight : MonoBehaviour
     [Header("汽車的重量"), Tooltip("這是汽車的重量"), Range(1000,6000)]
     public int cc = 1000;
 
-    float weight = 1.5f;
-
     [Header("汽車的品牌")]
     public string brand = "BMW";
     [Header("有沒有天窗")]
     public bool haswindow = true;
 
-    // Unity 常見類型
-    // 顏色 color
-    // 維度 vector2 vector3 vector4
+    /* Unity 常見類型
+    顏色 color
+    維度 vector2 vector3 vector4
+    */
+    public Vector2 v2;
+    public Vector2 v2zero = Vector2.zero;
+    public Vector2 v2one = Vector2.one;
+    public Vector2 v2my = new Vector2(7, 9);
+
+    public Vector3 v3 = new Vector3(1, 2, 3);
+    public Vector4 v4 = new Vector4(1, 2, 3, 4); //4筆資料
 
     public Color color;
     public Color red = Color.red;
     public Color myColor = new Color(0.3f, 0, 0.6f); // color(紅，綠，藍)
     public Color Mycolor2 = new Color(0, 0.5f, 0.5f, 0.5f); //color(紅，綠，藍，透明)
+
+    /*
+     按鍵 KeyCode
+    */
+    public KeyCode key1; // 不指定為 none(無)
+    public KeyCode key2 = KeyCode.A;
+    public KeyCode key3 = KeyCode.Mouse0; //左鍵0 右鍵1 滾輪2
+    public KeyCode key4 = KeyCode.Joystick1Button0;
+    /* 遊戲物件與元件
+    遊戲物件 GameObject
+    可以儲存任何包含 GameObject的物件
+    */
+    public GameObject obj1;
+    public GameObject obj2;
+    // 元件 Component
+
+    public Transform tra; //可以儲存任何包含Transform
+    public SpriteRenderer spr; //可以儲存任何包含SpriteRenderer
     private void Start()
     {
         // 初始設定

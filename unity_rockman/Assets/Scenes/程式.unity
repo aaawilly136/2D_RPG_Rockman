@@ -324,7 +324,21 @@ MonoBehaviour:
   cc: 1000
   brand: BMW
   haswindow: 1
+  v2: {x: 0, y: 0}
+  v2zero: {x: 0, y: 0}
+  v2one: {x: 1, y: 1}
+  v2my: {x: 7, y: 9}
+  v3: {x: 1, y: 2, z: 3}
+  v4: {x: 1, y: 2, z: 3, w: 4}
   color: {r: 0, g: 0, b: 0, a: 0}
   red: {r: 1, g: 0, b: 0, a: 1}
   myColor: {r: 0.3, g: 0, b: 0.6, a: 1}
   Mycolor2: {r: 0, g: 0.5, b: 0.5, a: 0.5}
+  key1: 0
+  key2: 97
+  key3: 323
+  key4: 350
+  obj1: {fileID: 1549640362}
+  obj2: {fileID: 444525440}
+  tra: {fileID: 1549640364}
+  spr: {fileID: 1549640363}
