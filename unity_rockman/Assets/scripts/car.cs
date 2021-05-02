@@ -52,18 +52,14 @@ public class car : MonoBehaviour
         // 傳回類型 名稱 = 傳回方法();
         int t = Ten();
         print("傳回方法的結果" + t);
+        // BMI計算器
+        float bmi = BMI(1.68F, 60);
+        print("計算後的BMI" + bmi);
 
     }
 
     // 更新事件執行時間點與次數:開始事件後以每秒約六十次執行 60fps
     // 應用:監聽玩家輸入與物件持續行為，例如 :玩家有沒有按按鈕或讓物件持續移動
-
-    private void Update()
-    {
-        print("我是更新事件!!");
-    }
-    #endregion
-    #region 方法
     // 方法:保存較複雜的演算法的程式區塊
     // 語法:
     // void 無傳回 :使用這個方法不會有傳回
@@ -119,6 +115,10 @@ public class car : MonoBehaviour
         print("開車音效:" + sound);
         print("特效:" + effect);
 
+    }
+    private float BMI(float height, float weight)
+    {
+        return weight / (height * height);
     }
 
     #endregion
