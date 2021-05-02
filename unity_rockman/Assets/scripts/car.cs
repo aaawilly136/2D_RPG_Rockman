@@ -21,7 +21,7 @@ public class car : MonoBehaviour
         // 取得
         // 語法: 欄位名稱
         // 字串串接: 字串 + 其他欄位
-        print("取得欄位 : " +number);
+        print("取得欄位 : " + number);
 
         // 存放
         // 語法:欄位名稱 指定 值;
@@ -34,7 +34,19 @@ public class car : MonoBehaviour
         //* 呼叫方法
         // 方法名稱();
         Test();
-        
+        Drive50();
+        Drive100();
+        Drive300();
+        //要有相同數量的參數!
+        Drive(200, "咻咻咻");
+        Drive(77, "蹦蹦蹦");
+        //有預設值得參數為【選填式參數】可填可不填
+        //有預設值得參數只能寫在最右邊
+        Drive(1000, "咻咻咻");
+        Drive(100, "閃電");//錯誤 沒有指定選填式參數
+        Drive(1000, effect: "閃電", sound: "休崩");//正確寫法 要指定是哪個欄位的參數
+        //有多個選填式參數
+
 
         // 傳回方法:
         // 傳回類型 名稱 = 傳回方法();
@@ -61,7 +73,7 @@ public class car : MonoBehaviour
     /// </summary>
     private void Test()
     {
-        print("我是測試方法。" );
+        print("我是測試方法。");
     }
 
     // 如果不是無傳回，在大括號內必須使用 傳回 return 值(必須跟傳回類型相同)
@@ -73,6 +85,42 @@ public class car : MonoBehaviour
     {
         return 10;
     }
+
+    //舉例:
+    //三個方法 1.以時數 50 開車 2. 時數100 3. 時數300
+    //加新功能 要有音效
+    //加特效
+    private void Drive50()
+    {
+        print("開車時數:" + 50);
+        print("開車音效");
+    }
+    private void Drive100()
+    {
+        print("開車時數:" + 100);
+        print("開車音效");
+    }
+    private void Drive300()
+    {
+        print("開車時數:" + 300);
+        print("開車音效");
+    }
+    //用參數解決 Paramater
+    //參數語法: 類型 參數名稱
+    /// <summary>
+    /// 開車
+    /// </summary>
+    /// <param name="speed">開車時數</param>
+    /// <param name="sound">開車音效</param>
+    /// <param name="effect">特效</param>
+    private void Drive(int speed, string sound = "咻~", string effect = "灰塵效果")//最右邊為預設值
+    {
+        print("開車時數:" + speed);
+        print("開車音效:" + sound);
+        print("特效:" + effect);
+
+    }
+
     #endregion
 
 }
