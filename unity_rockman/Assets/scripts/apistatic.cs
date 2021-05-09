@@ -2,7 +2,8 @@
 
 public class apistatic : MonoBehaviour
 {
-    
+    public Vector3 a = new Vector3(1, 1, 1);
+    public Vector3 b = new Vector3(22, 22, 22);
     //認識靜態api
     //包含關鍵字 static 就是靜態
     private void Start()
@@ -33,11 +34,28 @@ public class apistatic : MonoBehaviour
 
         Physics2D.gravity = new Vector2(0, -20f);
         print("重力:" + Physics2D.gravity);
+
+        //Application.OpenURL("https://unity.com/");
+        //float f = Mathf.Floor(9.999f);
+        //print("去小數點的結果:" +f);
+
+        float dis = Vector3.Distance(a, b);
+        print("a與b的距離" + dis);
+
+   
+        
     }
 
     private void Update()
     {
-        print("如果按下任意鍵:" + Input.anyKeyDown);
-        print("遊戲時間:" + Time.time);
+        #region 練習
+        //print("如果按下任意鍵:" + Input.anyKeyDown);
+        //print("遊戲時間:" + Time.time);
+
+        bool b = Input.GetKeyDown("space");
+        print("是否按下任意鍵:" + b);
+        #endregion
+
     }
+
 }

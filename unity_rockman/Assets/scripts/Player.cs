@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using UnityEditor.Animations;
 
 public class Player : MonoBehaviour
 {
     #region 欄位
-    [Header("移動速度"),Range(0,1000)]
+    [Header("移動速度"),Range(0,2000)]
     public float Speed = 10.5f;
     [Header("跳越高度"),Range(0,3000)]
     public int JumpHeight = 100;
@@ -25,23 +26,32 @@ public class Player : MonoBehaviour
     private Animator ani;
     #endregion
     #region 事件
-    
+
+   
     private void Start()
     {
-        Move(200, sound: "踏地聲");
-        Jump(100, sound: "踏地聲大");
-        Shoot(20);
-        bool dead = Die();
-        print("死亡為" +dead);
-        Hurt(10);
-        
-        
+
+        //利用程式取得元件
+        //傳回元件 取得元件<元件名稱>() -<泛型>
+        rig = gameObject.GetComponent<Rigidbody2D>();
+        ani = gameObject.GetComponent<Animator>();
+
 
     }
     #endregion
     #region 方法
     private void Update()
     {
+        Move();
+        Jump();
+    }
+    //繪製圖示 - 輔助編輯時的圖形線條
+    private void OnDrawGizmos()
+    {
+        //1.指定顏色
+        Gizmos.color = new Color(1, 0, 0, 0.5f);
+        //2.繪製圖形
+        Gizmos.DrawSphere(Vector3.zero, 0.5f);
         
     }
     /// <summary>
@@ -49,20 +59,32 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="speed">移動速度</param>
     /// <param name="sound">聲音</param>
-    public void Move(float speed,string sound="踏地聲")
+    public void Move()
     {
-        print("角色移動速度" + speed);
-        print("角色移動聲音" + sound);
+        //1. 要抓到玩家按下左右鍵的資訊 input
+        //2. 使用左右鍵的資訊控制角色移動
+        
+        float h = Input.GetAxis("Horizontal");
+        //剛體.加速度 = 二維向量(水平*速度*一幀的時間,0,rig.velocity.y指定回原本y軸加速度)
+        //一幀的時間 解決不同效能的裝置速度差的問題 Time.deltaTime 1/60次
+        rig.velocity = new Vector2(h * Speed * Time.deltaTime, rig.velocity.y);
     }
     /// <summary>
     /// 跳躍
     /// </summary>
     /// <param name="height">跳躍高度</param>
     /// <param name="sound">跳躍踏地聲</param>
-    public void Jump(int height,string sound="踏地聲大")
+    public void Jump()
     {
-        print("角色跳躍高度" + height);
-        print("角色跳躍聲音" + sound);
+        //如果 玩家 按下空白鍵就跳躍
+        //判斷式 c#
+        //傳回值為布林值的方法可以當作布林值使用
+        if (Input.GetKeyDown(KeyCode.Space) && isGround)
+        {
+            float J = Input.GetAxis("Vertical");
+            rig.AddForce(new Vector2(0, JumpHeight));
+        }
+        
     }
     /// <summary>
     /// 開槍
