@@ -24,6 +24,10 @@ public class Player : MonoBehaviour
     private AudioSource aud;
     private Rigidbody2D rig;
     private Animator ani;
+
+    [Header("判斷地板碰撞的位移與半徑")]
+    public Vector3 groundoffest;
+    public float groundRadius = 0.2f;
     #endregion
     #region 事件
 
@@ -51,7 +55,8 @@ public class Player : MonoBehaviour
         //1.指定顏色
         Gizmos.color = new Color(1, 0, 0, 0.5f);
         //2.繪製圖形
-        Gizmos.DrawSphere(Vector3.zero, 0.5f);
+        // trasform 可以抓到此腳本同一層的變形元件
+        Gizmos.DrawSphere(transform.position+ groundoffest,groundRadius);
         
     }
     /// <summary>
