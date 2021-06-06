@@ -84,10 +84,33 @@ public class Player : MonoBehaviour
         //如果 玩家 按下空白鍵就跳躍
         //判斷式 c#
         //傳回值為布林值的方法可以當作布林值使用
+        // * 判斷布林值是否等於true
+        //1. isGround==true(原本寫法)
+        //2. isGround (簡寫)
         if (Input.GetKeyDown(KeyCode.Space) && isGround)
         {
             float J = Input.GetAxis("Vertical");
             rig.AddForce(new Vector2(0, JumpHeight));
+        }
+        //碰到的物件= 2d 物理.覆蓋圓形(中心點、半徑、1<<圖層編號(圖層))
+        Collider2D hit = Physics2D.OverlapCircle(transform.position + groundoffest, groundRadius,1<<8);
+        // 測試print("碰到的物件 " + hit.name);
+
+        //如果碰到的物件存在並且碰到的物件名稱等於地板 就代表在地板上
+        //並且符號 && (shift+7)
+        //等於符號 == (此== 非= ，兩種等於是不一樣的)
+        // (if+tab鍵會自動幫你寫出語法)
+        if (hit && hit.name == "地板")
+        {
+            //print("角色在地板上");
+            isGround = true;
+        }
+        //否則 不在地板上
+        //否則 else
+        //語法:else{程式區塊} - 僅能寫在if下方 要不然會出錯
+        else
+        {
+            isGround = false;
         }
         
     }
