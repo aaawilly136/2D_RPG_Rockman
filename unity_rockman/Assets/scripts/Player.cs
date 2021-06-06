@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
     {
         Move();
         Jump();
+        Fire();
     }
     //繪製圖示 - 輔助編輯時的圖形線條
     private void OnDrawGizmos()
@@ -109,6 +110,7 @@ public class Player : MonoBehaviour
         {
             float J = Input.GetAxis("Vertical");
             rig.AddForce(new Vector2(0, JumpHeight));
+            ani.SetTrigger("跳躍觸發");
         }
         //碰到的物件= 2d 物理.覆蓋圓形(中心點、半徑、1<<圖層編號(圖層))
         Collider2D hit = Physics2D.OverlapCircle(transform.position + transform.right * groundoffest.x + transform.up * groundoffest.y , groundRadius,1 <<8);
@@ -138,10 +140,13 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="speed">射擊速度</param>
     /// <param name="sound">開槍聲音</param>
-    public void Shoot(float speed, string sound = "嘣")
+    public void Fire()
     {
-        print("射擊速度" + speed);
-        print("開槍聲音" + sound);
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            ani.SetTrigger("攻擊觸發");
+            aud.PlayOneShot(bulletSound, 0.5f);
+        }
     }
     /// <summary>
     /// 受傷

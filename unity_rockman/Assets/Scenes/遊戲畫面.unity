@@ -320,7 +320,7 @@ MonoBehaviour:
   bullet: {fileID: 110993736}
   bulletspeed: 800
   bulletpoint: {fileID: 0}
-  bulletSound: {fileID: 0}
+  bulletSound: {fileID: 8300000, guid: 93949f13f85dda347ad78630b69755d9, type: 3}
   groundoffest: {x: 0.12, y: -0.38, z: 0}
   groundRadius: 0.33
 --- !u!50 &31583639
@@ -7993,7 +7993,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: b3e589e7e5fc6d24ba59b82538ada193, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.12
   m_Pitch: 1
   Loop: 0
   Mute: 0
