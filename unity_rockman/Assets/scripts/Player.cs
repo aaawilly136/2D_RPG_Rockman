@@ -37,8 +37,10 @@ public class Player : MonoBehaviour
 
         //利用程式取得元件
         //傳回元件 取得元件<元件名稱>() -<泛型>
-        rig = gameObject.GetComponent<Rigidbody2D>();
-        ani = gameObject.GetComponent<Animator>();
+        //取得跟此腳本同一層的元件
+        rig = GetComponent<Rigidbody2D>();
+        ani = GetComponent<Animator>();
+        aud = GetComponent<AudioSource>();
 
 
     }
@@ -56,7 +58,7 @@ public class Player : MonoBehaviour
         Gizmos.color = new Color(1, 0, 0, 0.5f);
         //2.繪製圖形
         // trasform 可以抓到此腳本同一層的變形元件
-        Gizmos.DrawSphere(transform.position+ groundoffest,groundRadius);
+        Gizmos.DrawSphere(transform.position+ transform.right * groundoffest.x + transform.up * groundoffest.y +groundoffest,groundRadius);
         
     }
     /// <summary>
@@ -73,6 +75,22 @@ public class Player : MonoBehaviour
         //剛體.加速度 = 二維向量(水平*速度*一幀的時間,0,rig.velocity.y指定回原本y軸加速度)
         //一幀的時間 解決不同效能的裝置速度差的問題 Time.deltaTime 1/60次
         rig.velocity = new Vector2(h * Speed * Time.deltaTime, rig.velocity.y);
+        //如果按下D面向右邊
+        //否則 如果按下A面向左邊
+        if ((Input.GetKeyDown(KeyCode.D))||(Input.GetKeyDown(KeyCode.RightArrow)))
+        {
+            transform.eulerAngles = Vector3.zero;
+        }
+        // 否則如果 按下a鍵時面相左邊 -0, 180, 0
+        else if ((Input.GetKeyDown(KeyCode.A))||(Input.GetKeyDown(KeyCode.LeftArrow)))
+        {
+            transform.eulerAngles = new Vector3(0, 180, 0);
+        }
+        // 設定動畫
+        // 水平值不等於 零 布林值 打勾
+        // 水平值等於 零 布林值 取消
+        // 不等於符號寫法 != *(驚嘆號跟等於中間不能有空格)
+        ani.SetBool("走路開關", h != 0);   
     }
     /// <summary>
     /// 跳躍
@@ -93,14 +111,16 @@ public class Player : MonoBehaviour
             rig.AddForce(new Vector2(0, JumpHeight));
         }
         //碰到的物件= 2d 物理.覆蓋圓形(中心點、半徑、1<<圖層編號(圖層))
-        Collider2D hit = Physics2D.OverlapCircle(transform.position + groundoffest, groundRadius,1<<8);
+        Collider2D hit = Physics2D.OverlapCircle(transform.position + transform.right * groundoffest.x + transform.up * groundoffest.y , groundRadius,1 <<8);
         // 測試print("碰到的物件 " + hit.name);
 
         //如果碰到的物件存在並且碰到的物件名稱等於地板 就代表在地板上
         //並且符號 && (shift+7)
         //等於符號 == (此== 非= ，兩種等於是不一樣的)
+        //或者符號 || (shift + \\)
         // (if+tab鍵會自動幫你寫出語法)
-        if (hit && hit.name == "地板")
+        //或者名稱等於跳台
+        if (hit && (hit.name == "地板" || hit.name=="跳台"))
         {
             //print("角色在地板上");
             isGround = true;
@@ -112,7 +132,6 @@ public class Player : MonoBehaviour
         {
             isGround = false;
         }
-        
     }
     /// <summary>
     /// 開槍
