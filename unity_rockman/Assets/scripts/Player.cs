@@ -16,18 +16,19 @@ public class Player : MonoBehaviour
     public GameObject bullet;
     [Header("子彈速度"), Range(0, 5000)]
     public int bulletspeed = 800;
-    [Header("子彈生成點"), Tooltip("子彈生成點位置")]
-    public Transform bulletpoint;
     [Header("開槍音效"), Tooltip("開槍的音效")]
     public AudioClip bulletSound;
+    [Header("判斷地板碰撞的位移與半徑")]
+    public Vector3 groundoffest;
+    public float groundRadius = 0.2f;
+    [Header("子彈生成位置")]
+    public Vector3 posBullet;
 
     private AudioSource aud;
     private Rigidbody2D rig;
     private Animator ani;
 
-    [Header("判斷地板碰撞的位移與半徑")]
-    public Vector3 groundoffest;
-    public float groundRadius = 0.2f;
+  
     #endregion
     #region 事件
 
@@ -60,7 +61,9 @@ public class Player : MonoBehaviour
         //2.繪製圖形
         // trasform 可以抓到此腳本同一層的變形元件
         Gizmos.DrawSphere(transform.position+ transform.right * groundoffest.x + transform.up * groundoffest.y +groundoffest,groundRadius);
-        
+        // 先指定顏色在畫圖型
+        Gizmos.color = new Color(0, 0, 1, 0.5f);
+        Gizmos.DrawSphere(transform.position + transform.right * posBullet.x + transform.up * posBullet.y, 0.1f);
     }
     /// <summary>
     /// 移動
@@ -93,6 +96,10 @@ public class Player : MonoBehaviour
         // 不等於符號寫法 != *(驚嘆號跟等於中間不能有空格)
         ani.SetBool("走路開關", h != 0);   
     }
+    /// <summary>
+    /// 紀錄按下左鍵的計時器
+    /// </summary>
+    private float timer;
     /// <summary>
     /// 跳躍
     /// </summary>
@@ -142,10 +149,50 @@ public class Player : MonoBehaviour
     /// <param name="sound">開槍聲音</param>
     public void Fire()
     {
+        // 如果玩家按下左鍵就開槍 - 動畫與音效 發射子彈
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             ani.SetTrigger("攻擊觸發");
+        }
+        // 否則如果
+        // else if (布林值) {程式區塊}
+        // 按住左鍵
+        else if (Input.GetKey(KeyCode.Mouse0))
+        {
+            // 累加 +=
+            timer += Time.deltaTime;
+            print("按住左鍵的時間" + timer);
+        }
+        // 放開左鍵
+        else if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
             aud.PlayOneShot(bulletSound, 0.5f);
+            // Object.Instantiate(bullet); //原始寫法
+            // Instantiate //簡寫
+            // 暫存物件 = 生成(物件.座標.角度)
+            // Quaternion 四位元-角度
+            // Quaternion.identity
+            GameObject temp = Instantiate(bullet, transform.position + transform.right * posBullet.x + transform.up * posBullet.y, Quaternion.identity); //簡寫
+            // 暫存物件.取得元件<2D鋼體>().添加推力(角色的前方 * 子彈速度)
+            temp.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletspeed);
+            // 刪除(物件 , 延遲秒數) 
+            Destroy(temp, 1f);
+
+            // 讓子彈的角度根玩家目前的角度相同 - 子彈角度問題
+            //temp.transform.eulerAngles = transform.eulerAngles;
+            //ParticleSystem.MainModule main = temp.GetComponent<ParticleSystem>().main;
+            //main.flipRotation = transform.eulerAngles.y == 0 ? 0 : 1;
+            ParticleSystemRenderer render = temp.GetComponent<ParticleSystemRenderer>();
+            // 渲染的翻面 = 角色的角度 - ? : 三元運算子
+            render.flip = new Vector3(transform.eulerAngles.y == 0 ? 0 : 1, 0, 0);
+            // 計時器 = 數學.夾住(計時器,最小,最大); 
+            timer = Mathf.Clamp(timer, 0, 5);
+            //集氣:調整子彈尺寸
+            // temp.transform.lossyScale = Vector3.one; //為唯獨 read only - 不能指定值 - 此行為錯誤示範會出現紅色錯誤標示
+            temp.transform.localScale = Vector3.one + Vector3.one * timer;
+
+            //計時器歸零
+            timer = 0;
         }
     }
     /// <summary>
