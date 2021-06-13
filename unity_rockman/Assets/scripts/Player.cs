@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     private AudioSource aud;
     private Rigidbody2D rig;
     private Animator ani;
+    private ParticleSystem ps;
 
   
     #endregion
@@ -42,6 +43,8 @@ public class Player : MonoBehaviour
         rig = GetComponent<Rigidbody2D>();
         ani = GetComponent<Animator>();
         aud = GetComponent<AudioSource>();
+        // 粒子系統 = 變形元件.搜尋子物件("子物件名稱")
+        ps = transform.Find("集氣").GetComponent<ParticleSystem>();
 
 
     }
@@ -52,6 +55,8 @@ public class Player : MonoBehaviour
         Move();
         Jump();
         Fire();
+        // 2D 物理.忽略圖層碰撞(圖層1 ,圖層2 ,是否要忽略)
+        Physics2D.IgnoreLayerCollision(9, 10, true);
     }
     //繪製圖示 - 輔助編輯時的圖形線條
     private void OnDrawGizmos()
@@ -153,6 +158,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             ani.SetTrigger("攻擊觸發");
+            ps.Play();
         }
         // 否則如果
         // else if (布林值) {程式區塊}
@@ -161,11 +167,12 @@ public class Player : MonoBehaviour
         {
             // 累加 +=
             timer += Time.deltaTime;
-            print("按住左鍵的時間" + timer);
+            //print("按住左鍵的時間" + timer);
         }
         // 放開左鍵
         else if (Input.GetKeyUp(KeyCode.Mouse0))
         {
+            ps.Stop();  //停止集氣
             aud.PlayOneShot(bulletSound, 0.5f);
             // Object.Instantiate(bullet); //原始寫法
             // Instantiate //簡寫
