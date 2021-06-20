@@ -105,6 +105,7 @@ public class Player : MonoBehaviour
     /// 紀錄按下左鍵的計時器
     /// </summary>
     private float timer;
+    private float attack = 10;
     /// <summary>
     /// 跳躍
     /// </summary>
@@ -182,6 +183,10 @@ public class Player : MonoBehaviour
             GameObject temp = Instantiate(bullet, transform.position + transform.right * posBullet.x + transform.up * posBullet.y, Quaternion.identity); //簡寫
             // 暫存物件.取得元件<2D鋼體>().添加推力(角色的前方 * 子彈速度)
             temp.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletspeed);
+
+            // 占存物件.添加元件<子彈>();
+            temp.AddComponent<Bullet>();
+
             // 刪除(物件 , 延遲秒數) 
             Destroy(temp, 1f);
 
@@ -194,6 +199,9 @@ public class Player : MonoBehaviour
             render.flip = new Vector3(transform.eulerAngles.y == 0 ? 0 : 1, 0, 0);
             // 計時器 = 數學.夾住(計時器,最小,最大); 
             timer = Mathf.Clamp(timer, 0, 5);
+
+            
+            temp.GetComponent<Bullet>().attack = attack + Mathf.Round(timer) * 2;
             //集氣:調整子彈尺寸
             // temp.transform.lossyScale = Vector3.one; //為唯獨 read only - 不能指定值 - 此行為錯誤示範會出現紅色錯誤標示
             temp.transform.localScale = Vector3.one + Vector3.one * timer;

@@ -44,13 +44,15 @@ public class Enemy : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
+        //追蹤判定球
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         Gizmos.DrawSphere(transform.position, radiusTrack);
 
+        //攻擊判定球
         Gizmos.color = new Color(1, 0, 0, 0.3f);
         Gizmos.DrawSphere(transform.position, radiusAttack);
         
-        
+        //防止掉落判定球
         Gizmos.color = new Color(0.6f, 0.9f, 1, 0.7f);
         Gizmos.DrawSphere(transform.position + transform.right * groundoffest.x + transform.up * groundoffest.y, groundRadius);
     }
@@ -58,6 +60,8 @@ public class Enemy : MonoBehaviour
     #region 方法
     private void Move()
     {
+        //如果死亡就跳出
+        if (ani.GetBool("死亡開關")) return;
         //如果玩家 跟敵人的 距離 小於等於 追蹤範圍 就移動
 
         // 距離 = 三維向量.距離(a點,b點)
@@ -73,7 +77,8 @@ public class Enemy : MonoBehaviour
             ani.SetBool("走路開關", speed != 0);   //速度不等於零時 走路 否則 等待
             LookAtPlayer();
             CheckGround();
-            
+            //timer = cd;
+
         }
         else
         {
@@ -123,6 +128,22 @@ public class Enemy : MonoBehaviour
         {
            speed = 0;
         }
+    
+    }
+    
+    private void Dead()
+    {
+        ani.SetBool("死亡開關", true);
+        rig.Sleep();                                                  //剛體 睡著 避免飄移
+        rig.constraints = RigidbodyConstraints2D.FreezeAll;           //剛體凍結全部
+        GetComponent<CapsuleCollider2D>().enabled = false;            //碰撞器關閉
+        Destroy(gameObject, 2);                                       //兩秒後刪除物件
+    }
+    public void Hit(float damage)
+    {
+        hp -= damage;
+        //判斷式 只有一個分號 可以省略大括號
+        if (hp <= 0) Dead();
     }
     #endregion
 
