@@ -38,12 +38,16 @@ public class Enemy : MonoBehaviour
         timer = cd;
         speedOringinal = speed;
     }
+    [Header("攻擊區域位移與尺寸")]
+    public Vector3 attackoffest;
+    public Vector3 attackSize;
     private void Update()
     {
         Move();
     }
     private void OnDrawGizmos()
     {
+        #region 繪製距離與檢查地板
         //追蹤判定球
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         Gizmos.DrawSphere(transform.position, radiusTrack);
@@ -55,6 +59,10 @@ public class Enemy : MonoBehaviour
         //防止掉落判定球
         Gizmos.color = new Color(0.6f, 0.9f, 1, 0.7f);
         Gizmos.DrawSphere(transform.position + transform.right * groundoffest.x + transform.up * groundoffest.y, groundRadius);
+        #endregion
+        Gizmos.color = new Color(0.3f, 0.3f, 1, 0.8f);
+        Gizmos.DrawCube(transform.position + transform.right * attackoffest.x + transform.up * attackoffest.y, attackSize);
+
     }
     #endregion
     #region 方法
@@ -83,7 +91,7 @@ public class Enemy : MonoBehaviour
         else
         {
             ani.SetBool("走路開關", false);
-            timer = cd;
+            //timer = cd;
         }
     }
     private void Attack()
@@ -96,6 +104,8 @@ public class Enemy : MonoBehaviour
         {
             timer = 0;
             ani.SetTrigger("滑步攻擊");
+            Collider2D hit = Physics2D.OverlapBox(transform.position + transform.right * attackoffest.x + transform.up * attackoffest.y, attackSize, 0);
+            if (hit && hit.name == "玩家") hit.GetComponent<Player>().Hurt(attack);
         }
         
     }

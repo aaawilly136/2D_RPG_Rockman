@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using UnityEditor.Animations;
+using UnityEngine.UI; //引用介面ui
+using UnityEngine.SceneManagement;
+using System.Collections;  //引用系統.集合 api 集合與協同程序
 
 public class Player : MonoBehaviour
 {
     #region 欄位
     [Header("移動速度"),Range(0,2000)]
-    public float Speed = 10.5f;
+    public float Speed = 200f;
     [Header("跳越高度"),Range(0,3000)]
     public int JumpHeight = 100;
     [Header("血量"), Range(0, 200)]
@@ -29,10 +32,13 @@ public class Player : MonoBehaviour
     private Animator ani;
     private ParticleSystem ps;
 
-  
+    private Image imgHP;
+    private Text textHP;
+    private float hpMax;
+
     #endregion
     #region 事件
-
+    private CanvasGroup groupFinal;
    
     private void Start()
     {
@@ -45,18 +51,24 @@ public class Player : MonoBehaviour
         aud = GetComponent<AudioSource>();
         // 粒子系統 = 變形元件.搜尋子物件("子物件名稱")
         ps = transform.Find("集氣").GetComponent<ParticleSystem>();
-
+        imgHP = GameObject.Find("血條").GetComponent<Image>();
+        textHP = GameObject.Find("生命").GetComponent<Text>();
+        // 2D 物理.忽略圖層碰撞(圖層1 ,圖層2 ,是否要忽略)
+        Physics2D.IgnoreLayerCollision(9, 10, true);
+        textHP.text = life.ToString();
+        hpMax = HP;
+        groupFinal = GameObject.Find("結束畫面").GetComponent<CanvasGroup>();
 
     }
     #endregion
     #region 方法
     private void Update()
     {
+        if (Die()) return;
         Move();
         Jump();
         Fire();
-        // 2D 物理.忽略圖層碰撞(圖層1 ,圖層2 ,是否要忽略)
-        Physics2D.IgnoreLayerCollision(9, 10, true);
+        
     }
     //繪製圖示 - 輔助編輯時的圖形線條
     private void OnDrawGizmos()
@@ -215,18 +227,49 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="mideductionhp">造成傷害</param>
     /// <param name="sound">受傷聲音</param>
-    public void Hurt(float mideductionhp,string sound = "阨阿")
+    public void Hurt(float damage)
     {
-        print("扣的血量" + mideductionhp);
-        print("受傷的聲音" + sound);
+        HP -= damage;
+        imgHP.fillAmount = HP / hpMax;      //圖片.長度 = 血量/血量最大值
+        if (HP <= 0) Die();
     }
+    //靜態 static
+    //1.靜態欄位重新載入後不會顯示在屬性面板上
+    //2.靜態屬性欄位不會還原為預設值
+    [Header("生命數量")]
+    public static int life = 3;
     /// <summary>
     /// 死亡
     /// </summary>
     /// <returns>是否死亡</returns>
     private bool Die()
     {
-        return false;
+        //如果 尚未死亡 並且血量低於等於零 才可以執行 死亡
+        if (!ani.GetBool("死亡") && HP <= 0)
+        {
+            ani.SetBool("死亡", HP <= 0);
+            life--;                             //生命遞減
+            textHP.text = life.ToString();      //更新生命數量
+            
+            if(life >= 0 )Invoke("Replay", 2f);       //如果生命大於0就重新遊戲
+            else StartCoroutine(GameOver());         //否則就啟動協同程序
+        }
+        return HP <= 0;
+    }
+    // IEnumerator 允許傳回時間 必須有yield 讓步
+    private IEnumerator GameOver()
+    {
+        while (groupFinal.alpha <1)                                    //當透明度<1的時候執行
+        {
+            groupFinal.alpha += 0.05f;                                 //遞增透明度0.05
+            yield return new WaitForSeconds(0.02f);                   //間隔0.02秒
+        }
+        groupFinal.interactable = true;                               //允許互動
+        groupFinal.blocksRaycasts = true;                             //允許滑鼠遮擋
+    }
+    private void Replay()
+    {
+        SceneManager.LoadScene("遊戲畫面");
     }
     /// <summary>
     /// 吃道具
