@@ -12292,17 +12292,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 60
   attack: 50
-  hp: 500
+  hp: 30
   radiusTrack: 7.2
   radiusAttack: 1.1
   cd: 10
   groundoffest: {x: 1.18, y: -0.96, z: 0}
   groundRadius: 0.25
-  prop: {fileID: 0}
+  prop: {fileID: 6844533941022071441, guid: c6da99bfea109fc44b52dd65c0e8ed49, type: 3}
   proProbility: 0.5
   attackoffest: {x: 1.12, y: -0.16, z: 0}
   attackSize: {x: 0.92, y: 1.86, z: 0}
-  secondHP: 200
+  secondHP: 10
   psAttackSecond: {fileID: 8556829205980064138}
   attackSecond: 10
   stateBoss: 0
