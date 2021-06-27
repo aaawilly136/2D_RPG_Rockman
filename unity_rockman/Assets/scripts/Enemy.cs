@@ -18,6 +18,10 @@ public class Enemy : MonoBehaviour
     [Header("偵測地板的位移與半徑")]
     public Vector3 groundoffest;
     public float groundRadius = 0.1f;
+    [Header("掉落道具")]
+    public GameObject prop;
+    [Header("掉落機率"), Range(0f, 1f)]
+    public float proProbility = 0.5f;
 
     private Transform player;
     private Rigidbody2D rig;
@@ -148,7 +152,18 @@ public class Enemy : MonoBehaviour
         rig.constraints = RigidbodyConstraints2D.FreezeAll;           //剛體凍結全部
         GetComponent<CapsuleCollider2D>().enabled = false;            //碰撞器關閉
         Destroy(gameObject, 2);                                       //兩秒後刪除物件
+        Prop();
     }
+
+    private void Prop()
+    {
+        float r = Random.value;   //取得隨機值 0~1
+        //print("隨機值:" + r);
+        if (r<= proProbility ) Instantiate(prop, transform.position, Quaternion.identity);
+        
+
+    }
+
     public void Hit(float damage)
     {
         hp -= damage;

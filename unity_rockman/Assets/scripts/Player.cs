@@ -60,6 +60,10 @@ public class Player : MonoBehaviour
         groupFinal = GameObject.Find("結束畫面").GetComponent<CanvasGroup>();
 
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Eatitem(collision.gameObject);
+    }
     #endregion
     #region 方法
     private void Update()
@@ -275,9 +279,22 @@ public class Player : MonoBehaviour
     /// 吃道具
     /// </summary>
     /// <param name="prop">道具名稱</param>
-    private void Eatitem(string prop)
+    private void Eatitem(GameObject prop)
     {
-        print("取得道具");
+        //print(prop.name);
+        if (prop.tag == "道具")
+        {
+            // 字串 API Remove(編號). 刪除包含指定編號後面的字串
+            // print(prop.name.Remove(2));
+            print(prop.name.Remove(2));
+            switch (prop.name.Remove(2))
+            {
+                case "補血":
+                    print("玩家恢復血量");
+                    break;
+
+            }
+        }
     }
 
 
