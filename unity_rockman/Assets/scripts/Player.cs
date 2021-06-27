@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor.Animations;
 using UnityEngine.UI; //引用介面ui
 using UnityEngine.SceneManagement;
 using System.Collections;  //引用系統.集合 api 集合與協同程序
@@ -38,6 +37,7 @@ public class Player : MonoBehaviour
 
     #endregion
     #region 事件
+    private Text textFinaleTitle;
     private CanvasGroup groupFinal;
    
     private void Start()
@@ -58,11 +58,16 @@ public class Player : MonoBehaviour
         textHP.text = life.ToString();
         hpMax = HP;
         groupFinal = GameObject.Find("結束畫面").GetComponent<CanvasGroup>();
+        textFinaleTitle = GameObject.Find("結束標題").GetComponent<Text>();
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Eatitem(collision.gameObject);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.name == "死亡區域") HP = 0;
     }
     #endregion
     #region 方法
@@ -73,6 +78,17 @@ public class Player : MonoBehaviour
         Jump();
         Fire();
         
+    }
+    private void FixedUpdate()
+    {
+        MoveFixed();
+    }
+    private float h;
+    private void MoveFixed()
+    {
+        //剛體.加速度 = 二維向量(水平*速度*一幀的時間,0,rig.velocity.y指定回原本y軸加速度)
+        //一幀的時間 解決不同效能的裝置速度差的問題 Time.deltaTime 1/60次
+        rig.velocity = new Vector2(h * Speed * Time.deltaTime, rig.velocity.y);
     }
     //繪製圖示 - 輔助編輯時的圖形線條
     private void OnDrawGizmos()
@@ -87,6 +103,19 @@ public class Player : MonoBehaviour
         Gizmos.DrawSphere(transform.position + transform.right * posBullet.x + transform.up * posBullet.y, 0.1f);
     }
     /// <summary>
+    /// 1. 要有碰撞氣
+    /// 2. 粒子要勾選傳訊息的選項
+    /// 2-1. Collision 勾選
+    /// 2-2. 類型 Type:World
+    /// 2-3. 模式 Mode:2D
+    /// 2-4.勾選傳送訊息 Send Collision Messages
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnParticleCollision(GameObject other)
+    {
+        Hurt(other.GetComponent<ParticleSystemData>().attack);
+    }
+    /// <summary>
     /// 移動
     /// </summary>
     /// <param name="speed">移動速度</param>
@@ -96,10 +125,8 @@ public class Player : MonoBehaviour
         //1. 要抓到玩家按下左右鍵的資訊 input
         //2. 使用左右鍵的資訊控制角色移動
         
-        float h = Input.GetAxis("Horizontal");
-        //剛體.加速度 = 二維向量(水平*速度*一幀的時間,0,rig.velocity.y指定回原本y軸加速度)
-        //一幀的時間 解決不同效能的裝置速度差的問題 Time.deltaTime 1/60次
-        rig.velocity = new Vector2(h * Speed * Time.deltaTime, rig.velocity.y);
+        h = Input.GetAxis("Horizontal");
+     
         //如果按下D面向右邊
         //否則 如果按下A面向左邊
         if ((Input.GetKeyDown(KeyCode.D))||(Input.GetKeyDown(KeyCode.RightArrow)))
@@ -261,8 +288,10 @@ public class Player : MonoBehaviour
         return HP <= 0;
     }
     // IEnumerator 允許傳回時間 必須有yield 讓步
-    private IEnumerator GameOver()
+    public IEnumerator GameOver(string finalTitle = "GameOver")
     {
+        textFinaleTitle.text = finalTitle;
+
         while (groupFinal.alpha <1)                                    //當透明度<1的時候執行
         {
             groupFinal.alpha += 0.05f;                                 //遞增透明度0.05
@@ -286,14 +315,17 @@ public class Player : MonoBehaviour
         {
             // 字串 API Remove(編號). 刪除包含指定編號後面的字串
             // print(prop.name.Remove(2));
-            print(prop.name.Remove(2));
+            //print(prop.name.Remove(2));
             switch (prop.name.Remove(2))
             {
                 case "補血":
-                    print("玩家恢復血量");
+                    //print("玩家恢復血量");
+                    HP += 30;
+                    HP = Mathf.Clamp(HP, 0, hpMax);
+                    imgHP.fillAmount = HP / hpMax;
                     break;
-
             }
+            Destroy(prop);
         }
     }
 

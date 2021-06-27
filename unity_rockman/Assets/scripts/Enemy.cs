@@ -23,14 +23,14 @@ public class Enemy : MonoBehaviour
     [Header("掉落機率"), Range(0f, 1f)]
     public float proProbility = 0.5f;
 
-    private Transform player;
+    protected Transform player;
     private Rigidbody2D rig;
-    private Animator ani;
-    private float timer;
+    protected Animator ani;
+    protected float timer;
     private float speedOringinal;
     #endregion
     #region 事件
-    private void Start()
+    protected virtual void Start()
     {
         ani = GetComponent<Animator>();
         rig = GetComponent<Rigidbody2D>();
@@ -82,6 +82,7 @@ public class Enemy : MonoBehaviour
         if (dis <= radiusAttack)
         {
             Attack();
+            LookAtPlayer();
         }
         else if (dis <= radiusTrack)
         {
@@ -104,14 +105,15 @@ public class Enemy : MonoBehaviour
         {
             timer += Time.deltaTime;
         }
-        else
-        {
-            timer = 0;
-            ani.SetTrigger("滑步攻擊");
-            Collider2D hit = Physics2D.OverlapBox(transform.position + transform.right * attackoffest.x + transform.up * attackoffest.y, attackSize, 0);
-            if (hit && hit.name == "玩家") hit.GetComponent<Player>().Hurt(attack);
-        }
+        else AttackState();
         
+    }
+    protected virtual void AttackState()
+    {
+        timer = 0;
+        ani.SetTrigger("滑步攻擊");
+        Collider2D hit = Physics2D.OverlapBox(transform.position + transform.right * attackoffest.x + transform.up * attackoffest.y, attackSize, 0);
+        if (hit && hit.name == "玩家") hit.GetComponent<Player>().Hurt(attack);
     }
     /// <summary>
     /// 面相玩家
@@ -145,7 +147,7 @@ public class Enemy : MonoBehaviour
     
     }
     
-    private void Dead()
+    protected virtual void Dead()
     {
         ani.SetBool("死亡開關", true);
         rig.Sleep();                                                  //剛體 睡著 避免飄移
@@ -164,7 +166,7 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void Hit(float damage)
+    public virtual void Hit(float damage)
     {
         hp -= damage;
         //判斷式 只有一個分號 可以省略大括號
